@@ -1,0 +1,22 @@
+﻿@page "/meeting"
+
+<h3>Meeting</h3>
+<button type="button" @onclick="CreateMeeting">Create Meeting</button>
+<input type="text" @bind="meetingID" />
+@code {
+    private string meetingID = String.Empty;
+    private async Task CreateMeeting()
+    {
+        meetingID = Guid.NewGuid().ToString();
+        await ProtectedSessionStore.SetAsync("meetingID", meetingID);
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        meetingID = await GetMeeting();
+    }
+    private async Task<string> GetMeeting()
+    {
+        var result = await ProtectedSessionStore.GetAsync<string>("meetingID");
+        return result.Success ? result.Value : String.Empty;
+    }
+}
