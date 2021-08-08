@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using TestEstimation.Data;
 using Microsoft.AspNetCore.ResponseCompression;
 using TestEstimation.Hubs;
+using Microsoft.EntityFrameworkCore;
 
 namespace TestEstimation
 {
@@ -35,6 +36,11 @@ namespace TestEstimation
                 opts.MimeTypes = ResponseCompressionDefaults.MimeTypes.Concat(
                     new[] { "application/octet-stream" });
             });
+            services.AddDbContext<Data.CreateMeetingContext>(options =>
+            {
+                options.UseSqlite("Data Source = TestEstimations.db");
+            });
+            services.AddScoped<Data.MeetingDetails>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,18 +1,54 @@
 ﻿@page "/meeting"
-
+@inject Data.MeetingDetails meetings 
 <h3>Meeting</h3>
-<button type="button" @onclick="CreateMeeting">Create Meeting</button>
-<input type="text" @bind="meetingID" />
+<div>
+    <label for="userID">User ID :</label>
+    <input id="userID" type="text" @bind-value="userID" />
+    <label for="desc">User ID :</label>
+    <input id="desc" type="text" @bind-value="description" />
+    <button type="button" @onclick="CreateMeeting">Create Meeting</button>
+    <input type="text" @bind="meetingID" />
+</div>
+
+@if (meetingList.Any())
+{
+    <table>
+        <tr>
+            <td>Meeting ID</td>
+            <td>Created By</td>
+            <td>Description</td>
+        </tr>
+        @foreach(var meet in meetingList)
+                {
+    <tr>
+        <td>@meet.MeetingId</td>
+        <td>@meet.Creator</td>
+        <td>@meet.Description</td>
+    </tr>
+                }
+    </table>
+}
+
 @code {
     private string meetingID = String.Empty;
+    private string userID = String.Empty;
+    private string description = String.Empty;
+    private List<EstimationModels.Meeting> meetingList = new List<EstimationModels.Meeting>();
+    EstimationModels.Meeting meeting = new EstimationModels.Meeting();
     private async Task CreateMeeting()
     {
         meetingID = Guid.NewGuid().ToString();
+        meeting.Creator = userID;
+        meeting.Description = description;
+        meeting.MeetingId = meetingID;
+        meetings.CreateMeeting(meeting);
         await ProtectedSessionStore.SetAsync("meetingID", meetingID);
+        meetingList = await meetings.GetMeetingsAsync();
     }
     protected override async Task OnInitializedAsync()
     {
         meetingID = await GetMeeting();
+        meetingList = await meetings.GetMeetingsAsync();
     }
     private async Task<string> GetMeeting()
     {
