@@ -17,7 +17,12 @@
         }
     });
 }
-
+function GetCookie() {
+    return $.cookie('meeting-id') == undefined ? "" : $.cookie('meeting-id');
+}
+function SaveCookie(meetingID) {
+        $.cookie('meeting-id', meetingID);
+}
 
 function notifyMe() {
     // Let's check if the browser supports notifications
